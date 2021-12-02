@@ -232,12 +232,8 @@ def SixMonthsForecast():
             elif k==5:
                 month6.append((price,change,i.getCropName().split("/")[1],time))
             k+=1
-    month1.sort()
-    month2.sort()
-    month3.sort()
-    month4.sort()
-    month5.sort()
-    month6.sort()
+    list1 = [month1,month2,month3,month4,month5]
+    list1.sort()
     crop_month_wise=[]
     crop_month_wise.append([month1[0][3],month1[len(month1)-1][2],month1[len(month1)-1][0],month1[len(month1)-1][1],month1[0][2],month1[0][0],month1[0][1]])
     crop_month_wise.append([month2[0][3],month2[len(month2)-1][2],month2[len(month2)-1][0],month2[len(month2)-1][1],month2[0][2],month2[0][0],month2[0][1]])
