@@ -72,18 +72,11 @@ class Commodity:
         dataset = pd.read_csv(csv_name)
         self.X = dataset.iloc[:, :-1].values
         self.Y = dataset.iloc[:, 3].values
-
-        #from sklearn.model_selection import train_test_split
-        #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=0)
-
         # Fitting decision tree regression to dataset
         from sklearn.tree import DecisionTreeRegressor
         self.regressor = DecisionTreeRegressor(max_depth=10, random_state=0)
         self.regressor.fit(self.X, self.Y)
-        #y_pred_tree = self.regressor.predict(X_test)
-        # fsa=np.array([float(1),2019,45]).reshape(1,3)
-        # fask=regressor_tree.predict(fsa)
-
+       
     def getPredictedValue(self, value):
         if value[1]>=2019:
             fsa = np.array(value).reshape(1, 3)
@@ -100,16 +93,13 @@ class Commodity:
                 if x[i]==fsa:
                     ind=i
                     break
-            #print(index, " ",ind)
-            #print(x[ind])
-            #print(self.Y[i])
             return self.Y[i]
 
     def getCropName(self):
         a = self.name.split('.')
         return a[0]
 
-
+#app route is used to map the specific URL with the associated function
 @app.route('/')
 def index():
     context = {
@@ -129,11 +119,6 @@ def crop_profile(name):
     previous_x = [i[0] for i in prev_crop_values]
     previous_y = [i[1] for i in prev_crop_values]
     current_price = CurrentMonth(name)
-    #print(max_crop)
-    #print(min_crop)
-    #print(forecast_crop_values)
-    #print(prev_crop_values)
-    #print(str(forecast_x))
     crop_data = crops.crop(name)
     context = {
         "name":name,
@@ -162,7 +147,7 @@ def ticker(item, number):
 
     return context
 
-
+#Function gives the top five crops according to the price changes over the years
 def TopFiveWinners():
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -190,7 +175,7 @@ def TopFiveWinners():
     print(to_send)
     return to_send
 
-
+#Function gives the least five crops according to the price changes over the years
 def TopFiveLosers():
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -218,7 +203,7 @@ def TopFiveLosers():
     return to_send
 
 
-
+#Function gives next six months price changes
 def SixMonthsForecast():
     month1=[]
     month2=[]
@@ -233,6 +218,7 @@ def SixMonthsForecast():
             time = j[0]
             price = j[1]
             change = j[2]
+            #callout each month and predicting the data
             if k==0:
                 month1.append((price,change,i.getCropName().split("/")[1],time))
             elif k==1:
@@ -259,10 +245,10 @@ def SixMonthsForecast():
     crop_month_wise.append([month4[0][3],month4[len(month4)-1][2],month4[len(month4)-1][0],month4[len(month4)-1][1],month4[0][2],month4[0][0],month4[0][1]])
     crop_month_wise.append([month5[0][3],month5[len(month5)-1][2],month5[len(month5)-1][0],month5[len(month5)-1][1],month5[0][2],month5[0][0],month5[0][1]])
     crop_month_wise.append([month6[0][3],month6[len(month6)-1][2],month6[len(month6)-1][0],month6[len(month6)-1][1],month6[0][2],month6[0][0],month6[0][1]])
-
     print(crop_month_wise)
     return crop_month_wise
 
+#function to help the sixmonthsforecast funtion
 def SixMonthsForecastHelper(name):
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -280,10 +266,11 @@ def SixMonthsForecastHelper(name):
             month_with_year.append((current_month + i, current_year, annual_rainfall[current_month + i - 1]))
         else:
             month_with_year.append((current_month + i - 12, current_year + 1, annual_rainfall[current_month + i - 13]))
-    wpis = []
+    wpis = [] #wpi is wholesale price index 
     current_wpi = commodity.getPredictedValue([float(current_month), current_year, current_rainfall])
     change = []
 
+    #m is month , y is year, r is rainfall
     for m, y, r in month_with_year:
         current_predict = commodity.getPredictedValue([float(m), y, r])
         wpis.append(current_predict)
@@ -402,7 +389,7 @@ def TwelveMonthPrevious(name):
         new_crop_price.append(crop_price[i])
     return new_crop_price
 
-
+#calling out each commodity in the main function
 if __name__ == "__main__":
     arhar = Commodity(commodity_dictionary["arhar"])
     commodity_list.append(arhar)
