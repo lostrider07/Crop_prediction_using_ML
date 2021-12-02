@@ -8,7 +8,7 @@ import crops
 # import  otlib.pyplot as plt
 
 app = Flask(__name__)
-#types of crops
+#list of types of crops that is used
 commodity_dictionary = { 
     "arhar": "static/Arhar.csv",
     "bajra": "static/Bajra.csv",
