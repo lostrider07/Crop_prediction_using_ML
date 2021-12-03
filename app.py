@@ -5,8 +5,6 @@ import pandas as pd
 from datetime import datetime
 import crops
 
-# import  otlib.pyplot as plt
-
 app = Flask(__name__)
 #list of types of crops that is used
 commodity_dictionary = { 
@@ -80,7 +78,6 @@ class Commodity:
     def getPredictedValue(self, value):
         if value[1]>=2019:
             fsa = np.array(value).reshape(1, 3)
-            #print(" ",self.regressor.predict(fsa)[0])
             return self.regressor.predict(fsa)[0]
         else:
             c=self.X[:,0:2]
@@ -166,7 +163,6 @@ def TopFiveWinners():
         change.append((((current_predict - prev_predict) * 100 / prev_predict), commodity_list.index(i)))
     sorted_change = change
     sorted_change.sort(reverse=True)
-    # print(sorted_change)
     to_send = []
     for j in range(0, 5):
         perc, i = sorted_change[j]
@@ -311,6 +307,7 @@ def TwelveMonthsForecast(name):
             month_with_year.append((current_month + i, current_year, annual_rainfall[current_month + i - 1]))
         else:
             month_with_year.append((current_month + i - 12, current_year + 1, annual_rainfall[current_month + i - 13]))
+    #max, min index values are set to 0
     max_index = 0
     min_index = 0
     max_value = 0
@@ -340,14 +337,13 @@ def TwelveMonthsForecast(name):
         x = datetime(y, m, 1)
         x = x.strftime("%b %y")
         crop_price.append([x, round((wpis[i]* base[name.capitalize()]) / 100, 2) , round(change[i], 2)])
-    print("forecasr", wpis)
+    print("forecast", wpis)
     x = datetime(max_year,max_month,1)
     x = x.strftime("%b %y")
     max_crop = [x, round(max_value,2)]
     x = datetime(min_year, min_month, 1)
     x = x.strftime("%b %y")
     min_crop = [x, round(min_value,2)]
-
     return max_crop, min_crop, crop_price
 
 
