@@ -1,3 +1,4 @@
+# defining the valves
 def crop(crop_name):
     crop_data = {
     "wheat":["/static/images/wheat.jpg", "U.P., Punjab, Haryana, Rajasthan, M.P., bihar", "rabi","Sri Lanka, United Arab Emirates, Taiwan"],
