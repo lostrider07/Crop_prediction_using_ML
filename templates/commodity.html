@@ -28,7 +28,7 @@
         </div>
         <div class="card-stacked">
           <div class="card-content">
-              {% comment %} Table creation for retrieve the data from the api's in index   {% endcomment %}
+              {% comment %} Table creation for retrieve the data from the api's in index  {% endcomment %}
             <table>
               <tr>
                 <td>Current Price</td>
@@ -109,6 +109,7 @@
     <canvas id="chartjs-0" class="chartjs" width="undefined" height="undefined" style=" width:800px !important;
   height:400px !important;">
     </canvas>
+    {% comment %}calling out function for indexing  {% endcomment %}
   <script>
     new Chart(
     document.getElementById("chartjs-0"),{"type":"line","data":{"labels":{{context.forecast_x|safe}},"datasets":[{"label":"Next year Price","data":{{context.forecast_y}},"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{ responsive: true,
