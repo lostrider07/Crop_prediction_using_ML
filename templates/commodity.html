@@ -109,7 +109,7 @@
     <canvas id="chartjs-0" class="chartjs" width="undefined" height="undefined" style=" width:800px !important;
   height:400px !important;">
     </canvas>
-    {% comment %}calling out function for indexing  {% endcomment %}
+    {% comment %} Displaying the graph for Next year Price {% endcomment %}
   <script>
     new Chart(
     document.getElementById("chartjs-0"),{"type":"line","data":{"labels":{{context.forecast_x|safe}},"datasets":[{"label":"Next year Price","data":{{context.forecast_y}},"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{ responsive: true,
