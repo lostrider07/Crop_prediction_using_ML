@@ -1,15 +1,13 @@
-
+#importing libraries
 from flask import Flask, render_template
 import numpy as np
 import pandas as pd
 from datetime import datetime
 import crops
 
-# import  otlib.pyplot as plt
-
 app = Flask(__name__)
-
-commodity_dict = {
+#list of types of crops that is used
+commodity_dictionary = { 
     "arhar": "static/Arhar.csv",
     "bajra": "static/Bajra.csv",
     "barley": "static/Barley.csv",
@@ -72,22 +70,14 @@ class Commodity:
         dataset = pd.read_csv(csv_name)
         self.X = dataset.iloc[:, :-1].values
         self.Y = dataset.iloc[:, 3].values
-
-        #from sklearn.model_selection import train_test_split
-        #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_state=0)
-
         # Fitting decision tree regression to dataset
         from sklearn.tree import DecisionTreeRegressor
         self.regressor = DecisionTreeRegressor(max_depth=10, random_state=0)
         self.regressor.fit(self.X, self.Y)
-        #y_pred_tree = self.regressor.predict(X_test)
-        # fsa=np.array([float(1),2019,45]).reshape(1,3)
-        # fask=regressor_tree.predict(fsa)
-
+       
     def getPredictedValue(self, value):
         if value[1]>=2019:
             fsa = np.array(value).reshape(1, 3)
-            #print(" ",self.regressor.predict(fsa)[0])
             return self.regressor.predict(fsa)[0]
         else:
             c=self.X[:,0:2]
@@ -100,16 +90,13 @@ class Commodity:
                 if x[i]==fsa:
                     ind=i
                     break
-            #print(index, " ",ind)
-            #print(x[ind])
-            #print(self.Y[i])
             return self.Y[i]
 
     def getCropName(self):
         a = self.name.split('.')
         return a[0]
 
-
+#app route is used to map the specific URL with the associated function
 @app.route('/')
 def index():
     context = {
@@ -129,11 +116,6 @@ def crop_profile(name):
     previous_x = [i[0] for i in prev_crop_values]
     previous_y = [i[1] for i in prev_crop_values]
     current_price = CurrentMonth(name)
-    #print(max_crop)
-    #print(min_crop)
-    #print(forecast_crop_values)
-    #print(prev_crop_values)
-    #print(str(forecast_x))
     crop_data = crops.crop(name)
     context = {
         "name":name,
@@ -162,7 +144,7 @@ def ticker(item, number):
 
     return context
 
-
+#Function gives the top five crops according to the price changes over the years
 def TopFiveWinners():
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -181,7 +163,6 @@ def TopFiveWinners():
         change.append((((current_predict - prev_predict) * 100 / prev_predict), commodity_list.index(i)))
     sorted_change = change
     sorted_change.sort(reverse=True)
-    # print(sorted_change)
     to_send = []
     for j in range(0, 5):
         perc, i = sorted_change[j]
@@ -190,7 +171,7 @@ def TopFiveWinners():
     print(to_send)
     return to_send
 
-
+#Function gives the least five crops according to the price changes over the years
 def TopFiveLosers():
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -218,7 +199,7 @@ def TopFiveLosers():
     return to_send
 
 
-
+#Function gives next six months price changes
 def SixMonthsForecast():
     month1=[]
     month2=[]
@@ -233,6 +214,7 @@ def SixMonthsForecast():
             time = j[0]
             price = j[1]
             change = j[2]
+            #callout each month and predicting the data
             if k==0:
                 month1.append((price,change,i.getCropName().split("/")[1],time))
             elif k==1:
@@ -246,12 +228,8 @@ def SixMonthsForecast():
             elif k==5:
                 month6.append((price,change,i.getCropName().split("/")[1],time))
             k+=1
-    month1.sort()
-    month2.sort()
-    month3.sort()
-    month4.sort()
-    month5.sort()
-    month6.sort()
+    list1 = [month1,month2,month3,month4,month5]
+    list1.sort()
     crop_month_wise=[]
     crop_month_wise.append([month1[0][3],month1[len(month1)-1][2],month1[len(month1)-1][0],month1[len(month1)-1][1],month1[0][2],month1[0][0],month1[0][1]])
     crop_month_wise.append([month2[0][3],month2[len(month2)-1][2],month2[len(month2)-1][0],month2[len(month2)-1][1],month2[0][2],month2[0][0],month2[0][1]])
@@ -259,10 +237,10 @@ def SixMonthsForecast():
     crop_month_wise.append([month4[0][3],month4[len(month4)-1][2],month4[len(month4)-1][0],month4[len(month4)-1][1],month4[0][2],month4[0][0],month4[0][1]])
     crop_month_wise.append([month5[0][3],month5[len(month5)-1][2],month5[len(month5)-1][0],month5[len(month5)-1][1],month5[0][2],month5[0][0],month5[0][1]])
     crop_month_wise.append([month6[0][3],month6[len(month6)-1][2],month6[len(month6)-1][0],month6[len(month6)-1][1],month6[0][2],month6[0][0],month6[0][1]])
-
     print(crop_month_wise)
     return crop_month_wise
 
+#function to help the sixmonthsforecast funtion
 def SixMonthsForecastHelper(name):
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -280,10 +258,11 @@ def SixMonthsForecastHelper(name):
             month_with_year.append((current_month + i, current_year, annual_rainfall[current_month + i - 1]))
         else:
             month_with_year.append((current_month + i - 12, current_year + 1, annual_rainfall[current_month + i - 13]))
-    wpis = []
+    wpis = [] #wpi is wholesale price index 
     current_wpi = commodity.getPredictedValue([float(current_month), current_year, current_rainfall])
     change = []
 
+    #m is month , y is year, r is rainfall
     for m, y, r in month_with_year:
         current_predict = commodity.getPredictedValue([float(m), y, r])
         wpis.append(current_predict)
@@ -328,6 +307,7 @@ def TwelveMonthsForecast(name):
             month_with_year.append((current_month + i, current_year, annual_rainfall[current_month + i - 1]))
         else:
             month_with_year.append((current_month + i - 12, current_year + 1, annual_rainfall[current_month + i - 13]))
+    #max, min index values are set to 0
     max_index = 0
     min_index = 0
     max_value = 0
@@ -357,14 +337,13 @@ def TwelveMonthsForecast(name):
         x = datetime(y, m, 1)
         x = x.strftime("%b %y")
         crop_price.append([x, round((wpis[i]* base[name.capitalize()]) / 100, 2) , round(change[i], 2)])
-    print("forecasr", wpis)
+    print("forecast", wpis)
     x = datetime(max_year,max_month,1)
     x = x.strftime("%b %y")
     max_crop = [x, round(max_value,2)]
     x = datetime(min_year, min_month, 1)
     x = x.strftime("%b %y")
     min_crop = [x, round(min_value,2)]
-
     return max_crop, min_crop, crop_price
 
 
@@ -402,53 +381,53 @@ def TwelveMonthPrevious(name):
         new_crop_price.append(crop_price[i])
     return new_crop_price
 
-
+#calling out each commodity in the main function
 if __name__ == "__main__":
-    arhar = Commodity(commodity_dict["arhar"])
+    arhar = Commodity(commodity_dictionary["arhar"])
     commodity_list.append(arhar)
-    bajra = Commodity(commodity_dict["bajra"])
+    bajra = Commodity(commodity_dictionary["bajra"])
     commodity_list.append(bajra)
-    barley = Commodity(commodity_dict["barley"])
+    barley = Commodity(commodity_dictionary["barley"])
     commodity_list.append(barley)
-    copra = Commodity(commodity_dict["copra"])
+    copra = Commodity(commodity_dictionary["copra"])
     commodity_list.append(copra)
-    cotton = Commodity(commodity_dict["cotton"])
+    cotton = Commodity(commodity_dictionary["cotton"])
     commodity_list.append(cotton)
-    sesamum = Commodity(commodity_dict["sesamum"])
+    sesamum = Commodity(commodity_dictionary["sesamum"])
     commodity_list.append(sesamum)
-    gram = Commodity(commodity_dict["gram"])
+    gram = Commodity(commodity_dictionary["gram"])
     commodity_list.append(gram)
-    groundnut = Commodity(commodity_dict["groundnut"])
+    groundnut = Commodity(commodity_dictionary["groundnut"])
     commodity_list.append(groundnut)
-    jowar = Commodity(commodity_dict["jowar"])
+    jowar = Commodity(commodity_dictionary["jowar"])
     commodity_list.append(jowar)
-    maize = Commodity(commodity_dict["maize"])
+    maize = Commodity(commodity_dictionary["maize"])
     commodity_list.append(maize)
-    masoor = Commodity(commodity_dict["masoor"])
+    masoor = Commodity(commodity_dictionary["masoor"])
     commodity_list.append(masoor)
-    moong = Commodity(commodity_dict["moong"])
+    moong = Commodity(commodity_dictionary["moong"])
     commodity_list.append(moong)
-    niger = Commodity(commodity_dict["niger"])
+    niger = Commodity(commodity_dictionary["niger"])
     commodity_list.append(niger)
-    paddy = Commodity(commodity_dict["paddy"])
+    paddy = Commodity(commodity_dictionary["paddy"])
     commodity_list.append(paddy)
-    ragi = Commodity(commodity_dict["ragi"])
+    ragi = Commodity(commodity_dictionary["ragi"])
     commodity_list.append(ragi)
-    rape = Commodity(commodity_dict["rape"])
+    rape = Commodity(commodity_dictionary["rape"])
     commodity_list.append(rape)
-    jute = Commodity(commodity_dict["jute"])
+    jute = Commodity(commodity_dictionary["jute"])
     commodity_list.append(jute)
-    safflower = Commodity(commodity_dict["safflower"])
+    safflower = Commodity(commodity_dictionary["safflower"])
     commodity_list.append(safflower)
-    soyabean = Commodity(commodity_dict["soyabean"])
+    soyabean = Commodity(commodity_dictionary["soyabean"])
     commodity_list.append(soyabean)
-    sugarcane = Commodity(commodity_dict["sugarcane"])
+    sugarcane = Commodity(commodity_dictionary["sugarcane"])
     commodity_list.append(sugarcane)
-    sunflower = Commodity(commodity_dict["sunflower"])
+    sunflower = Commodity(commodity_dictionary["sunflower"])
     commodity_list.append(sunflower)
-    urad = Commodity(commodity_dict["urad"])
+    urad = Commodity(commodity_dictionary["urad"])
     commodity_list.append(urad)
-    wheat = Commodity(commodity_dict["wheat"])
+    wheat = Commodity(commodity_dictionary["wheat"])
     commodity_list.append(wheat)
 
     app.run()
