@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>crop prediction</title>
-  <!-- Compiled and minified CSS -->
+  <!-- Compiled  minified CSS and google //fonts.googleapis.com/icon-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -10,7 +10,10 @@
     <!-- Compiled and minified JavaScript -->
     <style>
         div.main {
-            padding: 5px 50px 75px 50px;
+          padding-top: 5px;
+          padding-right: 50px;
+          padding-bottom: 75px;
+          padding-left: 50px;
         }
 
         span,img {
@@ -35,7 +38,7 @@
 
 		<h3 class="card-panel #ffd54f amber lighten-2 center valign-wrapper center"><a class="brand-logo  #ffd54f-text text-lighten-4" href="#"><img alt="" src="/static/ApnaAnaajLogo.png" height="100px" width="100px" class="responsive-img" />
           <span>crop prediction</span></a>
-          </a></h3><h3>
+          </a></h3>
 
 	</div>
 
@@ -44,7 +47,7 @@
 " height="70px" width="70px">Apna Anaaj</h3>
     -->
 
-    <div class="row">
+    <div class="row">``
     <div class="card-panel col s9">
       <h4 class=" #e0f7fa cyan lighten-5">Top Gainers(Current trends)</h4>
       <table class="striped">
@@ -110,7 +113,7 @@
                 </td>
             </tr>
           </table>
-
+            {% comment %} Data gets rendered on page load {% endcomment %}
             <script>
                     var i = 0
                     setInterval(function(){
@@ -131,6 +134,7 @@
 
     </div>
   </div>
+    {% comment %} Displaying the crop details {% endcomment %}
   <h5>Explore by commodity</h5>
   <div class="row">
     <div class="col s3">
@@ -464,5 +468,4 @@
   </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
 </html>

@@ -2,14 +2,17 @@
 <html>
 <head>
   <title>Crop prediction</title>
-  <!-- Compiled and minified CSS -->
+    <!-- Compiled for minified CSS and google fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Compiled and minified JavaScript -->
      <style>
         div.main {
-            padding: 5px 50px 75px 50px;
+          padding-top: 5px;
+          padding-right: 50px;
+          padding-bottom: 75px;
+          padding-left: 50px;
         }
     </style>
         
@@ -25,6 +28,7 @@
         </div>
         <div class="card-stacked">
           <div class="card-content">
+              {% comment %} Table creation for retrieve the data from the api's in index  {% endcomment %}
             <table>
               <tr>
                 <td>Current Price</td>
@@ -105,6 +109,7 @@
     <canvas id="chartjs-0" class="chartjs" width="undefined" height="undefined" style=" width:800px !important;
   height:400px !important;">
     </canvas>
+    {% comment %} Displaying the graph for Next year Price {% endcomment %}
   <script>
     new Chart(
     document.getElementById("chartjs-0"),{"type":"line","data":{"labels":{{context.forecast_x|safe}},"datasets":[{"label":"Next year Price","data":{{context.forecast_y}},"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{ responsive: true,
@@ -117,7 +122,9 @@
                 stepSize : 200
             }
         }]
-    }}});</script>
+    }}});
+    {% comment %} Displaying the graph for Previous year price {% endcomment %}
+  </script>
   </div>
   <div class="chartjs-wrapper col s7 offset-s1">
     <canvas id="chartjs-1" class="chartjs" width="undefined" height="undefined" style=" width:800px !important;
@@ -134,7 +141,8 @@
                 stepSize : 200
             }
         }]
-    }}});</script>
+    }}});
+  </script>
   </div>
   </div>
 
